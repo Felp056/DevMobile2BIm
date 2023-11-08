@@ -49,6 +49,8 @@
         android:layout_marginBottom="20dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_pluss"
+        app:maxImageSize="50sp"
         android:backgroundTint="@android:color/holo_green_dark"/>
 
 

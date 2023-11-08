@@ -2,17 +2,24 @@ package com.example.exemplobancodados.view;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.exemplobancodados.R;
+import com.example.exemplobancodados.adapter.AlunoListAdapter;
 import com.example.exemplobancodados.controller.AlunoController;
+import com.example.exemplobancodados.model.Aluno;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class AlunoActivity extends AppCompatActivity {
 
@@ -22,6 +29,7 @@ public class AlunoActivity extends AppCompatActivity {
     private EditText edRa;
     private EditText edNome;
     private View viewAlert;
+    private RecyclerView rvAlunos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +37,7 @@ public class AlunoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_aluno);
 
         controller = new AlunoController(this);
-
+        rvAlunos = findViewById(R.id.rvAlunos);
         btCadastroAluno = findViewById(R.id.btCadastroAluno);
         btCadastroAluno.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +45,7 @@ public class AlunoActivity extends AppCompatActivity {
                 abrirCadastro();
             }
         });
+        atualizarListaAlunos();
     }
 
     private void abrirCadastro() {
@@ -60,15 +69,19 @@ public class AlunoActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Salvar",null);
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //método de salvar aluno
-                salvarDados();
-
+            public void onShow(DialogInterface diallog) {
+                Button bt = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                bt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        salvarDados();
+                    }
+                });
             }
         });
-
         dialog = builder.create();
         dialog.show();
 
@@ -81,9 +94,11 @@ public class AlunoActivity extends AppCompatActivity {
         if(retorno != null){
             if(retorno.contains("RA")){
                 edRa.setError(retorno);
+                edRa.requestFocus();
             }
             if(retorno.contains("NOME")){
                 edNome.setError(retorno);
+                edNome.requestFocus();
             }
         }else{
             Toast.makeText(this,
@@ -91,7 +106,15 @@ public class AlunoActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
 
             dialog.dismiss();
+            atualizarListaAlunos();
         }
+    }
+    private void atualizarListaAlunos(){
+        ArrayList<Aluno> listaAlunos = controller.retornarTodosOsAlunos();
+        AlunoListAdapter adapter = new AlunoListAdapter(listaAlunos, this);
+        rvAlunos.setLayoutManager(new LinearLayoutManager(this));
+        rvAlunos.setAdapter(adapter);
+
     }
 }
 

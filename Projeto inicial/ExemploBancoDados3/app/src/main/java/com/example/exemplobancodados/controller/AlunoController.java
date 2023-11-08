@@ -6,6 +6,8 @@ import android.content.Intent;
 import com.example.exemplobancodados.dao.AlunoDao;
 import com.example.exemplobancodados.model.Aluno;
 
+import java.util.ArrayList;
+
 public class AlunoController {
 
     private Context context;
@@ -40,4 +42,10 @@ public class AlunoController {
         }
         return null;
     }
+
+    public ArrayList<Aluno> retornarTodosOsAlunos()
+    {
+        return  AlunoDao.getInstancia(context).getAll();
+    }
+
 }
